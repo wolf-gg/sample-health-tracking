@@ -1,9 +1,19 @@
 import express, { Request, Response } from "express";
 
-const router = express.Router();
+export class HealthRouter {
+  private router;
 
-router.get("/", (req: Request, res: Response) => {
-  res.send("Server is running");
-});
+  constructor() {
+    const router = express.Router();
 
-export default router;
+    router.get("/", (req: Request, res: Response) => {
+      res.send("Server is running");
+    });
+
+    this.router = router;
+  }
+
+  getRouter() {
+    return this.router;
+  }
+}
