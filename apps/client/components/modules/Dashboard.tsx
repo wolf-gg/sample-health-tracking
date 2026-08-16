@@ -1,14 +1,16 @@
-import { ChevronLeft, ChevronRight, RefreshCcw } from "lucide-react"
 import { MetricCard } from "@/components/base/MetricCard"
-import { Button } from "@/components/ui/button"
+import { ActivityList } from "@/components/base/ActivityList"
 import { fetcher } from "@/utils/fetcher"
 import useSWR from "swr"
 import { Metric } from "@/types/metric"
 import { useState } from "react"
-import { isToday } from "@/utils/date"
+import { DateChanger } from "../base/DateChanger"
 
 export const Dashboard: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(() => new Date())
+  const [selectedMetricId, setSelectedMetricId] = useState<string | undefined>(
+    undefined
+  )
 
   const changeDay = (offset: number) => {
     setSelectedDate((current) => {
@@ -21,11 +23,6 @@ export const Dashboard: React.FC = () => {
   const resetToToday = () => setSelectedDate(new Date())
 
   const selectedDateString = selectedDate.toISOString()
-  const selectedDateLabel = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(selectedDate)
 
   const { data: dashboardData } = useSWR<{
     exerciseMinutes: number
@@ -59,47 +56,36 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-center gap-3 rounded-lg border bg-card p-3">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          aria-label="Previous day"
-          onClick={() => changeDay(-1)}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-
-        <div className="min-w-44 text-center text-sm font-medium">
-          {selectedDateLabel}
-        </div>
-
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          aria-label="Next day"
-          disabled={isToday(selectedDate)}
-          onClick={() => changeDay(1)}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          onClick={resetToToday}
-          disabled={isToday(selectedDate)}
-        >
-          Today
-        </Button>
-      </div>
+      <DateChanger
+        selectedDate={selectedDate}
+        onLeftClick={() => changeDay(-1)}
+        onRightClick={() => changeDay(1)}
+        onTodayClick={resetToToday}
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {metrics.map((metric) => (
-          <MetricCard key={metric.id} metric={metric} />
+          <MetricCard
+            key={metric.id}
+            metric={metric}
+            onClick={() =>
+              setSelectedMetricId((prevMetricId) => {
+                if (prevMetricId === metric.id) {
+                  return undefined
+                }
+
+                return metric.id
+              })
+            }
+            selected={metric.id === selectedMetricId}
+          />
         ))}
       </div>
+
+      <ActivityList
+        selectedMetricId={selectedMetricId}
+        selectedDate={selectedDate}
+      />
     </div>
   )
 }

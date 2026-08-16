@@ -1,10 +1,18 @@
+import { cn } from "@/lib/utils"
 import { Metric } from "@/types/metric"
+import React from "react"
 
 interface IMetricCard {
   metric: Metric
+  onClick?: () => void
+  selected?: boolean
 }
 
-export const MetricCard: React.FC<IMetricCard> = ({ metric }) => {
+export const MetricCard: React.FC<IMetricCard> = ({
+  metric,
+  onClick,
+  selected,
+}) => {
   const formatValue = (value: number) => {
     if (metric.unit === "steps") return new Intl.NumberFormat().format(value)
     return value.toString()
@@ -15,9 +23,27 @@ export const MetricCard: React.FC<IMetricCard> = ({ metric }) => {
     Math.max(0, (metric.value / metric.target) * 100)
   )
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!onClick) return
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault()
+      onClick()
+    }
+  }
+
   return (
-    <div className="rounded-lg border bg-card p-4">
-      <div className="flex items-baseline justify-between gap-2">
+    <div
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={handleKeyDown}
+      onClick={onClick}
+      className={cn(
+        "rounded-lg border bg-card p-4",
+        onClick ? "cursor-pointer" : "",
+        selected ? "border border-2 border-black/50" : ""
+      )}
+    >
+      <div className="flex items-baseline justify-between gap-2 select-none">
         <div>
           <div className="text-sm font-medium">{metric.title}</div>
           <div className="mt-1 text-2xl font-semibold">

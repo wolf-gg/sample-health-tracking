@@ -103,6 +103,10 @@ To make the backend pattern more lean and the flow unidirectional, we will follo
   - Auto-update whenever new metrics data comes in, increment streak if metrics passed the targets.
   - Remove streak when the day passes without passing the targets
 
+### Notes on agent prompts
+- Used Copilot to introduce the initial design of the dashboard and the page
+- Then added the ability to change the date via buttons at the top
+
 ## 5. Client setup and dashboard module (1 hr)
 
 ### Shadcn helper
@@ -111,3 +115,11 @@ Use the helper to initialize the starting code for the client. This also saves u
 ### Dashboard
 Create the frontpage by allowing the user to view their metrics and if they reached their goals.
 > NOTE: that we provided the targets for the day as a static value for now
+
+## 6. View activities (1 hr)
+
+### Notes on agent prompts
+- Used copilot to create an activity list module
+  - It initially created a modal style where the list pops up after clicking in the dashboard
+  - Asked the agent to make list appear below the dashboard instead
+  - Agent created one component `ActivityList` for all activities. Changed it to three separate components so that it's easier to maintain in the future.
