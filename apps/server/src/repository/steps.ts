@@ -17,7 +17,7 @@ export class StepsRepository {
     const { startOfDay, endOfDay } = getStartAndEndOfDay(date);
 
     const steps = await this.collection
-      .find({
+      .find<StepData>({
         date: { $gte: startOfDay, $lte: endOfDay },
       })
       .toArray();

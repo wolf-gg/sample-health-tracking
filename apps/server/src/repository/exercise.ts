@@ -17,7 +17,7 @@ export class ExerciseDataRepository {
     const { startOfDay, endOfDay } = getStartAndEndOfDay(date);
 
     const exerciseData = await this.collection
-      .find({
+      .find<ExerciseData>({
         date: { $gte: startOfDay, $lte: endOfDay },
       })
       .toArray();

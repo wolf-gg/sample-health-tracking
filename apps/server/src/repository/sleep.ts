@@ -17,7 +17,7 @@ export class SleepDataRepository {
     const { startOfDay, endOfDay } = getStartAndEndOfDay(date);
 
     const sleepData = await this.collection
-      .find({
+      .find<SleepData>({
         date: { $gte: startOfDay, $lte: endOfDay },
       })
       .toArray();
