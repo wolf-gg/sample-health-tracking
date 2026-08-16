@@ -13,6 +13,6 @@ export class StepsService {
   }
 
   async getStepsByDay(date: Date) {
-    return await this.stepsRepository.getStepsByDay(date);
+    return this.stepsRepository.getStepsByDay(date);
   }
 }

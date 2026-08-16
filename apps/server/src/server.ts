@@ -13,6 +13,7 @@ import { SleepDataRouter } from "./router/sleep";
 import { ExerciseDataRepository } from "./repository/exercise";
 import { ExerciseDataService } from "./service/exercise";
 import { ExerciseDataRouter } from "./router/exercise";
+import { DashboardRouter } from "./router/dashboard";
 
 const { json, urlencoded } = bodyParser;
 
@@ -33,6 +34,11 @@ export const createServer = async (): Promise<Express> => {
   const stepsRouter = new StepsRouter(stepsService);
   const sleepDataRouter = new SleepDataRouter(sleepDataService);
   const exerciseDataRouter = new ExerciseDataRouter(exerciseDataService);
+  const dashboardRouter = new DashboardRouter(
+    exerciseDataService,
+    stepsService,
+    sleepDataService,
+  );
 
   app
     .disable("x-powered-by")
@@ -43,7 +49,8 @@ export const createServer = async (): Promise<Express> => {
     .use("/health", healthRouter.getRouter())
     .use("/steps", stepsRouter.getRouter())
     .use("/sleep", sleepDataRouter.getRouter())
-    .use("/exercise", exerciseDataRouter.getRouter());
+    .use("/exercise", exerciseDataRouter.getRouter())
+    .use("/dashboard", dashboardRouter.getRouter());
 
   return app;
 };

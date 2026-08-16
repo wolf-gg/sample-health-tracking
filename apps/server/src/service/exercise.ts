@@ -13,6 +13,6 @@ export class ExerciseDataService {
   }
 
   async getExerciseDataByDay(date: Date) {
-    return await this.exerciseDataRepository.getExerciseDataByDay(date);
+    return this.exerciseDataRepository.getExerciseDataByDay(date);
   }
 }
