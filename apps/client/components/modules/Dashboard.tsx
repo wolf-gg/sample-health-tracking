@@ -5,8 +5,13 @@ import { fetcher } from "@/utils/fetcher"
 import useSWR from "swr"
 import { Metric, ActivityType } from "@/types/metric"
 import { useState } from "react"
-import { DateChanger } from "../base/DateChanger"
-import { mutate } from "swr"
+import { WeekChanger } from "../base/WeekChanger"
+import { WeekView } from "./WeekView"
+import {
+  EXERCISE_MINUTES_TARGET,
+  SLEEP_HOURS_TARGET,
+  STEPS_TARGET,
+} from "@/constants/metric"
 
 export const Dashboard: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(() => new Date())
@@ -15,15 +20,15 @@ export const Dashboard: React.FC = () => {
   >(undefined)
   const [isAddOpen, setIsAddOpen] = useState(false)
 
-  const changeDay = (offset: number) => {
+  const changeWeek = (offset: number) => {
     setSelectedDate((current) => {
       const next = new Date(current)
-      next.setDate(next.getDate() + offset)
+      next.setDate(next.getDate() + offset * 7)
       return next
     })
   }
 
-  const resetToToday = () => setSelectedDate(new Date())
+  const resetToThisWeek = () => setSelectedDate(new Date())
 
   const selectedDateString = selectedDate.toISOString()
 
@@ -39,32 +44,32 @@ export const Dashboard: React.FC = () => {
       title: "Steps",
       value: dashboardData?.steps ?? 0,
       unit: "steps",
-      target: 5000,
+      target: STEPS_TARGET,
     },
     {
       id: ActivityType.SLEEP,
       title: "Sleep",
       value: dashboardData?.sleepHours ?? 0,
       unit: "hrs",
-      target: 7,
+      target: SLEEP_HOURS_TARGET,
     },
     {
       id: ActivityType.EXERCISE,
       title: "Exercise",
       value: dashboardData?.exerciseMinutes ?? 0,
       unit: "min",
-      target: 30,
+      target: EXERCISE_MINUTES_TARGET,
     },
   ]
 
   return (
     <div>
       <div className="flex items-center justify-between">
-        <DateChanger
+        <WeekChanger
           selectedDate={selectedDate}
-          onLeftClick={() => changeDay(-1)}
-          onRightClick={() => changeDay(1)}
-          onTodayClick={resetToToday}
+          onLeftClick={() => changeWeek(-1)}
+          onRightClick={() => changeWeek(1)}
+          onTodayClick={resetToThisWeek}
         />
 
         <div>
@@ -76,6 +81,11 @@ export const Dashboard: React.FC = () => {
           </button>
         </div>
       </div>
+
+      <WeekView
+        selectedDate={selectedDate}
+        onDayClick={(date) => setSelectedDate(date)}
+      />
 
       <AddActivityModal
         selectedDate={selectedDate}

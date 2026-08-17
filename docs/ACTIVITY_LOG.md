@@ -130,3 +130,10 @@ Create the frontpage by allowing the user to view their metrics and if they reac
 - Used copilot to create the components for adding activity via a button and a pop-up
 - Used copilot to also add the POST endpoints for the acitivies
 - Iterated the generated code to allow decimal points for exercise and sleep metrics
+
+## 8. Weekly view (30 mins)
+
+### Notes on agent promps
+- Extracted the subcomponents from `WeekView` to `DayCard` and `CompletedTargetsIndicator`
+- Changed the dependency array in the `useEffect` in `WeekView` so that we fix the maximum depth reached issue
+- Changed stylings so that `MetricCard` and `DayCard` are more consistent with each other
