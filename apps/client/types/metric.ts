@@ -11,3 +11,10 @@ export interface Metric {
   unit: string
   target: number
 }
+
+export interface DayProgress {
+  date: Date
+  exerciseMinutes: number
+  steps: number
+  sleepHours: number
+}

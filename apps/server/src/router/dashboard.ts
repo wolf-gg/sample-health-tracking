@@ -39,6 +39,40 @@ export class DashboardRouter {
       });
     });
 
+    router.get("/week", async (req: Request, res: Response) => {
+      const { dates } = req.query;
+
+      if (dates === undefined || typeof dates !== "string") {
+        res.status(400).send(`"dates" query parameter is required`);
+        return;
+      }
+
+      const dateStrings = dates.split(",");
+      const result: Record<
+        string,
+        { exerciseMinutes: number; steps: number; sleepHours: number }
+      > = {};
+
+      for (const dateString of dateStrings) {
+        const date = new Date(dateString);
+        const exerciseData =
+          await exerciseDataService.getExerciseDataByDay(date);
+        const stepsData = await stepsService.getStepsByDay(date);
+        const sleepData = await sleepDateService.getSleepDataByDay(date);
+
+        result[dateString] = {
+          exerciseMinutes: exerciseData.reduce(
+            (sum, item) => sum + item.minutes,
+            0,
+          ),
+          steps: stepsData.reduce((sum, item) => sum + item.steps, 0),
+          sleepHours: sleepData.reduce((sum, item) => sum + item.hours, 0),
+        };
+      }
+
+      res.json(result);
+    });
+
     this.router = router;
   }
 

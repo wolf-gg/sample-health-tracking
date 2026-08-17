@@ -38,9 +38,9 @@ export const MetricCard: React.FC<IMetricCard> = ({
       onKeyDown={handleKeyDown}
       onClick={onClick}
       className={cn(
-        "rounded-lg border bg-card p-4",
+        "rounded-lg border bg-card p-4 hover:bg-muted/50",
         onClick ? "cursor-pointer" : "",
-        selected ? "border border-2 border-black/50" : ""
+        selected ? "border-2 border-black/50" : ""
       )}
     >
       <div className="flex items-baseline justify-between gap-2 select-none">
