@@ -84,7 +84,7 @@ export const DayCard: React.FC<IDayCard> = ({
         </div>
 
         <div className="text-xs text-muted-foreground">
-          {progress.exerciseMinutes}m
+          {progress.exerciseMinutes.toFixed(1)}m
         </div>
         <div className="h-1 overflow-hidden rounded-full bg-muted">
           <div
