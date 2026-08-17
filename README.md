@@ -1,40 +1,102 @@
-# Turborepo kitchen sink starter
+# Simple Fitness Tracker
 
-This Turborepo starter is maintained by the Turborepo core team.
+## Description
+A simple fitness tracker that allows users to log their daily activities.
 
-This example also shows how to use [Workspace Configurations](https://turborepo.dev/docs/core-concepts/monorepos/configuring-workspaces).
+### Tech stack
+- React (shadcn) - for the client
+- Nodejs (express) - for the server
+- Turborepo - for handling the monorepo and boilerplate structure
+- MongoDB - for the database
 
-## Using this example
+### Tools used
+- VSCode
+- GitHub Copilot
+- Podman - for running an instance of MongoDB
 
-Run the following command:
+## Installation
 
-```sh
-npx create-turbo@latest -e kitchen-sink
+### Prerequisites
+
+`node` >= v24.14.1
+
+### Preparing the database
+
+The application needs a `MongoDB` instance running in order to run.
+
+#### Install via `podman`
+
+While you can choose any way to install your database server, I recommend using `podman` and running this command:
+
+```bash
+podman run --name <CONTAINER_NAME> -p 27017:27107 -d mongo
 ```
 
-## What's inside?
+#### Connection to the server
 
-This Turborepo includes the following packages and apps:
+Once the database server is installed, provide `DB_URL`, `DB_NAME`, and `PORT` inside `apps/server/.env`. You can take a look inside `apps/server/sample.env` for a sample configuration.
 
-### Apps and Packages
+### Preparing the application
 
-- `api`: an [Express](https://expressjs.com/) server
-- `storefront`: a [Next.js](https://nextjs.org/) app
-- `admin`: a [Vite](https://vitejs.dev/) single page app
-- `blog`: a [Remix](https://remix.run/) blog
-- `@repo/eslint-config`: ESLint configurations used throughout the monorepo
-- `@repo/jest-presets`: Jest configurations
-- `@repo/logger`: isomorphic logger (a small wrapper around console.log)
-- `@repo/ui`: a dummy React UI library (which contains `<CounterButton>` and `<Link>` components)
-- `@repo/typescript-config`: tsconfig.json's used throughout the monorepo
+Turborepo will handle installing the modules needed for both the server and the client
 
-Each package and app is 100% [TypeScript](https://www.typescriptlang.org/).
+```bash
+npm install
+```
 
-### Utilities
+### Running the application
 
-This Turborepo has some additional tools already setup for you:
+Turborepo will handle running both the server and client inside one terminal
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Jest](https://jestjs.io) test runner for all things JavaScript
-- [Prettier](https://prettier.io) for code formatting
+```bash
+npm run build
+npm start
+```
+
+The application will be accessible via `localhost:3000`
+
+## Assumptions
+
+### Metrics
+The metrics we have used on the app are based on Healthy365:
+- Step count
+- Sleep hours
+- Exercise minutes
+  - This is labelled as MVPA in the app but changed the naming here to simplify
+
+We could add more metrics (e.g. water intake, etc) but decided to stick with this main three to easily compare side-by-side with Healthy365 during development.
+
+### Choosing MongoDB
+We chose using MongoDB based on the following assumptions:
+- Easy to extend data from a table without introducing a migration
+  - i.e. If we want to introduce multi-user later on, then it's easy to add a `userId` column to an existing metric table
+- Metadata from a third-party provider is unknown and can change over time
+  - It will be more straightforward to store unknown JSON formats to Mongo, then let the application parse the metadata (via strict typings)
+- Not much data relationship
+  - The metrics in the app will usually not needed to be joined together when querying
+
+## Limitations
+### Adding activities
+A fitness tracking app ideally should sync from different fitness trackers. To do that we would need to expose an API that allows us to send data that we will then parse on the backend before saving it as an activity log. This would require more effort than the 6 hour time period because we would need to create a parser that has the ability to parse the data that was sent and then convert it to a schema that the database understands.
+
+For simplicity of adding activities, what we do now is expose a button that allows a user to add an activity, but they have to manually input the data themselves.
+
+### Providing the backend URL to the frontend
+Right now the backend URL is hardcoded to the `fetcher` utility in the client. For production, we need to extract this and provide the URL as an environment variable when building the application
+
+### No multi-user
+The application can now only save metrics for only one person, since the database right now could not differentiate the metrics between different people. Ideally we would want to append a `userId` for each metric and index it so that we can easily filter the metrics for each user.
+
+### Static values for the daily targets
+Ideally we would want to save the daily targets as a user preference, but since we did not introduce the concept of multiple users at this stage, we initially provided the targets as static values loaded from a constants file.
+
+### No automated streak count
+Initially, we are considering showing a dedicated streak counter for the app, but realized that the complexity of introducing this will overflow the 6hr time limit. The compromise used for now is a adding a clear indicator in the weekly view whether the targets for a specific day is reached or not.
+
+## Activity Log
+For details on how we spent our time developing the application, a document is available for viewing inside `docs/ACTIVITY_LOG.md`.
+
+This document also contain some details on how we have used AI for developing the app, and highlights also some of the changes we introduced on the code generated by AI.
+
+## Descriptive Commits
+Each commit inside the repository contains descriptions on how each phase of the implementation is executed. It also highlights what we have used for prompting AI on developing features.

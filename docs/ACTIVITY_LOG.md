@@ -102,10 +102,7 @@ To make the backend pattern more lean and the flow unidirectional, we will follo
 - Create a table that saves the current streak
   - Auto-update whenever new metrics data comes in, increment streak if metrics passed the targets.
   - Remove streak when the day passes without passing the targets
-
-### Notes on agent prompts
-- Used Copilot to introduce the initial design of the dashboard and the page
-- Then added the ability to change the date via buttons at the top
+- Do not record the streaks as a count, but add an indicator in the weekly view for the days that targets are reached.
 
 ## 5. Client setup and dashboard module (1 hr)
 
@@ -115,6 +112,10 @@ Use the helper to initialize the starting code for the client. This also saves u
 ### Dashboard
 Create the frontpage by allowing the user to view their metrics and if they reached their goals.
 > NOTE: that we provided the targets for the day as a static value for now
+
+### Notes on agent prompts
+- Used Copilot to introduce the initial design of the dashboard and the page
+- Then added the ability to change the date via buttons at the top
 
 ## 6. View activities (1 hr)
 
