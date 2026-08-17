@@ -1,9 +1,10 @@
 import { ExerciseActivityList } from "./ExerciseActivityList"
 import { SleepActivityList } from "./SleepActivityList"
 import { StepsActivityList } from "./StepsActivityList"
+import { ActivityType } from "@/types/metric"
 
 interface IActivityList {
-  selectedMetricId?: string
+  selectedMetricId?: ActivityType
   selectedDate: Date
 }
 
@@ -14,11 +15,11 @@ export const ActivityList: React.FC<IActivityList> = ({
   if (!selectedMetricId) return <></>
 
   switch (selectedMetricId) {
-    case "exercise":
+    case ActivityType.EXERCISE:
       return <ExerciseActivityList selectedDate={selectedDate} />
-    case "sleep":
+    case ActivityType.SLEEP:
       return <SleepActivityList selectedDate={selectedDate} />
-    case "steps":
+    case ActivityType.STEPS:
       return <StepsActivityList selectedDate={selectedDate} />
   }
 }

@@ -1,16 +1,19 @@
 import { MetricCard } from "@/components/base/MetricCard"
 import { ActivityList } from "@/components/base/ActivityList"
+import AddActivityModal from "@/components/base/AddActivityModal"
 import { fetcher } from "@/utils/fetcher"
 import useSWR from "swr"
-import { Metric } from "@/types/metric"
+import { Metric, ActivityType } from "@/types/metric"
 import { useState } from "react"
 import { DateChanger } from "../base/DateChanger"
+import { mutate } from "swr"
 
 export const Dashboard: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(() => new Date())
-  const [selectedMetricId, setSelectedMetricId] = useState<string | undefined>(
-    undefined
-  )
+  const [selectedMetricId, setSelectedMetricId] = useState<
+    ActivityType | undefined
+  >(undefined)
+  const [isAddOpen, setIsAddOpen] = useState(false)
 
   const changeDay = (offset: number) => {
     setSelectedDate((current) => {
@@ -24,7 +27,7 @@ export const Dashboard: React.FC = () => {
 
   const selectedDateString = selectedDate.toISOString()
 
-  const { data: dashboardData } = useSWR<{
+  const { data: dashboardData, mutate: mutateDashboardData } = useSWR<{
     exerciseMinutes: number
     steps: number
     sleepHours: number
@@ -32,21 +35,21 @@ export const Dashboard: React.FC = () => {
 
   const metrics: Metric[] = [
     {
-      id: "steps",
+      id: ActivityType.STEPS,
       title: "Steps",
       value: dashboardData?.steps ?? 0,
       unit: "steps",
       target: 5000,
     },
     {
-      id: "sleep",
+      id: ActivityType.SLEEP,
       title: "Sleep",
       value: dashboardData?.sleepHours ?? 0,
       unit: "hrs",
       target: 7,
     },
     {
-      id: "exercise",
+      id: ActivityType.EXERCISE,
       title: "Exercise",
       value: dashboardData?.exerciseMinutes ?? 0,
       unit: "min",
@@ -56,11 +59,32 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div>
-      <DateChanger
+      <div className="flex items-center justify-between">
+        <DateChanger
+          selectedDate={selectedDate}
+          onLeftClick={() => changeDay(-1)}
+          onRightClick={() => changeDay(1)}
+          onTodayClick={resetToToday}
+        />
+
+        <div>
+          <button
+            onClick={() => setIsAddOpen(true)}
+            className="rounded bg-primary px-3 py-1 text-white"
+          >
+            Add Activity
+          </button>
+        </div>
+      </div>
+
+      <AddActivityModal
         selectedDate={selectedDate}
-        onLeftClick={() => changeDay(-1)}
-        onRightClick={() => changeDay(1)}
-        onTodayClick={resetToToday}
+        isOpen={isAddOpen}
+        onClose={() => setIsAddOpen(false)}
+        onSubmit={() => {
+          setIsAddOpen(false)
+          mutateDashboardData()
+        }}
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

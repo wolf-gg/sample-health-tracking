@@ -123,3 +123,10 @@ Create the frontpage by allowing the user to view their metrics and if they reac
   - It initially created a modal style where the list pops up after clicking in the dashboard
   - Asked the agent to make list appear below the dashboard instead
   - Agent created one component `ActivityList` for all activities. Changed it to three separate components so that it's easier to maintain in the future.
+
+## 7. Add activity (30 mins)
+
+### Notes on agent prompts
+- Used copilot to create the components for adding activity via a button and a pop-up
+- Used copilot to also add the POST endpoints for the acitivies
+- Iterated the generated code to allow decimal points for exercise and sleep metrics
