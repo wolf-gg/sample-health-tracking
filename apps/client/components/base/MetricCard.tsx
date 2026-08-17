@@ -15,7 +15,7 @@ export const MetricCard: React.FC<IMetricCard> = ({
 }) => {
   const formatValue = (value: number) => {
     if (metric.unit === "steps") return new Intl.NumberFormat().format(value)
-    return value.toString()
+    return value.toFixed(1)
   }
 
   const percent = Math.min(

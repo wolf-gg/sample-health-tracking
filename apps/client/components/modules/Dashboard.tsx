@@ -2,7 +2,7 @@ import { MetricCard } from "@/components/base/MetricCard"
 import { ActivityList } from "@/components/base/ActivityList"
 import AddActivityModal from "@/components/base/AddActivityModal"
 import { fetcher } from "@/utils/fetcher"
-import useSWR from "swr"
+import useSWR, { mutate } from "swr"
 import { Metric, ActivityType } from "@/types/metric"
 import { useState } from "react"
 import { WeekChanger } from "../base/WeekChanger"
@@ -94,6 +94,15 @@ export const Dashboard: React.FC = () => {
         onSubmit={() => {
           setIsAddOpen(false)
           mutateDashboardData()
+
+          // Also revalidate the data fetched for the individual metrics
+          mutate(
+            (key) =>
+              typeof key === "string" &&
+              (key.startsWith("/steps") ||
+                key.startsWith("/sleep") ||
+                key.startsWith("/exercise"))
+          )
         }}
       />
 
